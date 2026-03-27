@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Service Configuration Tool - MEDITECH Expanse</title>
+    <style>
+        :root {
+            --color-nhs-blue: #005eb8;
+            --color-nhs-dark-blue: #003087;
+            --color-clinical-grey: #425563;
+            --color-text-primary: #212b32;
+            --color-text-secondary: #425563;
+            --color-path-a: #1976d2;
+            --color-path-b: #f57c00;
+            --color-success: #007f3b;
+            --color-warning: #ed8b00;
+            --color-critical: #da291c;
+            --color-bg-page: #f9fafb;
+            --color-border: #d8dde6;
+            --spacing-sm: 0.75rem;
+            --spacing-md: 1.5rem;
+            --spacing-lg: 2.5rem;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--color-bg-page);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--color-nhs-dark-blue) 0%, var(--color-nhs-blue) 100%);
+            color: white;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 8px;
+            padding: var(--spacing-lg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .panel h2 {
+            color: var(--color-nhs-blue);
+            margin-bottom: var(--spacing-md);
+            padding-bottom: var(--spacing-sm);
+            border-bottom: 3px solid var(--color-nhs-blue);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-md);
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--color-clinical-grey);
+        }
+
+        .form-group label .required {
+            color: var(--color-critical);
+        }
+
+        .form-group label .help {
+            font-weight: 400;
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+            font-style: italic;
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--color-nhs-blue);
+            box-shadow: 0 0 0 3px rgba(0,94,184,0.1);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: var(--spacing-md);
+            padding: var(--spacing-sm) 0;
+        }
+
+        .radio-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .radio-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-option label {
+            display: block;
+            padding: var(--spacing-md);
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            border-color: var(--color-nhs-blue);
+            background: #e3f2fd;
+            font-weight: 600;
+        }
+
+        .radio-option label strong {
+            display: block;
+            margin-bottom: 0.25rem;
+            color: var(--color-nhs-blue);
+        }
+
+        .radio-option label span {
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Visualization Styles */
+        .visualization {
+            margin-top: var(--spacing-lg);
+        }
+
+        .scenario-header {
+            background: var(--color-bg-page);
+            padding: var(--spacing-md);
+            border-radius: 6px;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .scenario-header h3 {
+            color: var(--color-nhs-dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .scenario-vars {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-sm);
+            font-size: 0.9rem;
+        }
+
+        .var-item {
+            padding: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid var(--color-nhs-blue);
+        }
+
+        .var-item strong {
+            color: var(--color-nhs-blue);
+            font-size: 0.85rem;
+        }
+
+        .var-item .value {
+            color: var(--color-text-primary);
+            font-weight: 600;
+        }
+
+        .var-item .empty {
+            color: var(--color-text-secondary);
+            font-style: italic;
+        }
+
+        .flow-diagram {
+            margin-top: var(--spacing-lg);
+        }
+
+        .flow-step {
+            margin-bottom: var(--spacing-md);
+            position: relative;
+        }
+
+        .flow-step::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--color-nhs-blue);
+            margin: 0.5rem 0;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .flow-box {
+            background: white;
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            padding: var(--spacing-md);
+        }
+
+        .flow-box.trigger {
+            border-color: var(--color-success);
+            background: #e8f5e9;
+        }
+
+        .flow-box.routing {
+            border-color: var(--color-nhs-blue);
+            background: #e3f2fd;
+        }
+
+        .flow-box.recipients {
+            border-color: var(--color-warning);
+            background: #fff8e1;
+        }
+
+        .flow-box h4 {
+            color: var(--color-nhs-dark-blue);
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .flow-box .content {
+            font-size: 0.95rem;
+        }
+
+        .recipient-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recipient-list li {
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid var(--color-nhs-blue);
+        }
+
+        .recipient-list li.primary {
+            border-left-color: var(--color-success);
+            background: #e8f5e9;
+        }
+
+        .recipient-list li.secondary {
+            border-left-color: var(--color-warning);
+            background: #fff8e1;
+        }
+
+        .recipient-list li strong {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+
+        .path-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+
+        .path-panel {
+            padding: var(--spacing-md);
+            border-radius: 6px;
+            border: 2px solid;
+        }
+
+        .path-panel.path-a {
+            border-color: var(--color-path-a);
+            background: #e3f2fd;
+        }
+
+        .path-panel.path-b {
+            border-color: var(--color-path-b);
+            background: #fff3e0;
+        }
+
+        .path-panel h4 {
+            margin-bottom: var(--spacing-sm);
+            font-size: 1rem;
+        }
+
+        .path-panel.path-a h4 {
+            color: var(--color-path-a);
+        }
+
+        .path-panel.path-b h4 {
+            color: var(--color-path-b);
+        }
+
+        .buttons {
+            display: flex;
+            gap: var(--spacing-md);
+            margin-top: var(--spacing-lg);
+            padding-top: var(--spacing-lg);
+            border-top: 2px solid var(--color-border);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: var(--color-nhs-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--color-nhs-dark-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,94,184,0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--color-nhs-blue);
+            border: 2px solid var(--color-nhs-blue);
+        }
+
+        .btn-secondary:hover {
+            background: #e3f2fd;
+        }
+
+        .alert {
+            padding: var(--spacing-md);
+            border-radius: 6px;
+            margin-bottom: var(--spacing-md);
+            border-left: 5px solid;
+        }
+
+        .alert.info {
+            background: #e3f2fd;
+            border-color: var(--color-nhs-blue);
+            color: #0d47a1;
+        }
+
+        .alert.warning {
+            background: #fff3e0;
+            border-color: var(--color-warning);
+            color: #e65100;
+        }
+
+        .alert.success {
+            background: #e8f5e9;
+            border-color: var(--color-success);
+            color: #1b5e20;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .buttons {
+                display: none;
+            }
+            .layout {
+                display: block;
+            }
+            .panel {
+                page-break-inside: avoid;
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+            .path-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Interactive Service Configuration Tool</h1>
+            <p>Configure your MEDITECH Expanse results notification routing and see real-time visualization</p>
+            <p style="font-size: 0.9rem; opacity: 0.8; margin-top: 0.5rem;">Mid Cheshire NHS Foundation Trust | PP64 Build</p>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                <a href="clinical-guide-enhanced.html" style="color: white; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); padding: 0.5rem 1rem; border-radius: 4px; transition: background 0.2s;">
+                    📚 View Clinical Lead's Guide
+                </a>
+            </div>
+        </header>
+
+        <div class="layout">
+            <!-- Left Panel: Input Form -->
+            <div class="panel">
+                <h2>Service Configuration</h2>
+
+                <div class="alert info">
+                    <strong>Instructions:</strong> Fill in the details for your service. As you type, the visualization on the right will update to show how results will be routed in real-time.
+                </div>
+
+                <form id="configForm">
+                    <!-- Trust & Location -->
+                    <div class="form-group">
+                        <label>
+                            Trust <span class="required">*</span>
+                            <span class="help">Your NHS Trust name</span>
+                        </label>
+                        <input type="text" id="trust" value="Mid Cheshire NHS Foundation Trust" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Location <span class="required">*</span>
+                            <span class="help">Hospital site (e.g., Leighton Hospital, Victoria Infirmary)</span>
+                        </label>
+                        <input type="text" id="location" placeholder="e.g., Leighton Hospital" required>
+                    </div>
+
+                    <!-- Department & Service -->
+                    <div class="form-group">
+                        <label>
+                            Department <span class="required">*</span>
+                            <span class="help">Clinical department (e.g., Orthopaedics, General Surgery)</span>
+                        </label>
+                        <input type="text" id="department" placeholder="e.g., Orthopaedics" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Service <span class="required">*</span>
+                            <span class="help">Specific service within department (e.g., Fracture Clinic, Inpatient Ward)</span>
+                        </label>
+                        <input type="text" id="service" placeholder="e.g., Fracture Clinic" required>
+                    </div>
+
+                    <!-- Care Setting -->
+                    <div class="form-group">
+                        <label>
+                            Care Setting <span class="required">*</span>
+                            <span class="help">This determines Item Triage value for workgroup routing</span>
+                        </label>
+                        <select id="careSetting" required>
+                            <option value="">-- Select --</option>
+                            <option value="inpatient">Inpatient (Item Triage = INPRESULT)</option>
+                            <option value="ambulatory">Outpatient/Ambulatory (Item Triage = AMBRESULT)</option>
+                        </select>
+                    </div>
+
+                    <!-- Radio Button Choice -->
+                    <div class="form-group">
+                        <label>
+                            Radio Button Choice (Trust-wide) <span class="required">*</span>
+                            <span class="help">Your Trust's global setting - cannot be changed per service</span>
+                        </label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="pathA" name="radioButton" value="attending" required>
+                                <label for="pathA">
+                                    <strong>Path A</strong>
+                                    <span>Attending (Current Responsible Consultant)</span>
+                                </label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="pathB" name="radioButton" value="requesting" required>
+                                <label for="pathB">
+                                    <strong>Path B</strong>
+                                    <span>Requesting Clinician (Who Ordered)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Workgroup Configuration -->
+                    <div class="form-group">
+                        <label>
+                            Team Workgroup Configuration <span class="required">*</span>
+                            <span class="help">How should results be delivered?</span>
+                        </label>
+                        <select id="deliverTo" required>
+                            <option value="">-- Select --</option>
+                            <option value="provider">Provider Only (individual delivery only)</option>
+                            <option value="both">Workgroup and Provider (RECOMMENDED for inpatients)</option>
+                            <option value="workgroup">Workgroup Only (suppress individual delivery)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="workgroupNameGroup" style="display: none;">
+                        <label>
+                            Workgroup Name
+                            <span class="help">e.g., E.ORTHOINPT, E.FRACTCLINIC</span>
+                        </label>
+                        <input type="text" id="workgroupName" placeholder="e.g., E.ORTHOINPT">
+                    </div>
+
+                    <!-- Example Scenario Variables -->
+                    <h3 style="margin: var(--spacing-lg) 0 var(--spacing-md); color: var(--color-nhs-blue);">Example Scenario</h3>
+
+                    <div class="alert info">
+                        <strong>Create a scenario:</strong> Enter example patient and clinician details to see how routing works
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            System Consultant (Attending Field in MEDITECH)
+                            <span class="help">Who does MEDITECH THINK is responsible? (May be stale!)</span>
+                        </label>
+                        <input type="text" id="systemConsultant" placeholder="e.g., Dr Smith (Consultant of the Week)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Real Consultant (Actually Responsible NOW)
+                            <span class="help">Who is ACTUALLY responsible for the patient in clinical reality?</span>
+                        </label>
+                        <input type="text" id="realConsultant" placeholder="e.g., Dr Jones (took over Tuesday)">
+                    </div>
+
+                    <div class="alert warning" id="dataQualityWarning" style="display: none; margin-top: 0.5rem;">
+                        <strong>⚠️ DATA QUALITY GAP DETECTED:</strong> System Consultant ≠ Real Consultant<br>
+                        This is the "stale Attending field" problem. Path A will deliver to the WRONG consultant.
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Patient Name
+                            <span class="help">Example patient for this scenario</span>
+                        </label>
+                        <input type="text" id="patientName" placeholder="e.g., John Smith">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Requester (Who Ordered the Scan)
+                            <span class="help">Which clinician placed the imaging order?</span>
+                        </label>
+                        <input type="text" id="requester" placeholder="e.g., Dr Ahmed Khan (F2)">
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            Additional Pathway Recipients
+                            <span class="help">Other workgroups that should receive (e.g., HASU team for stroke, safeguarding for paeds)</span>
+                        </label>
+                        <input type="text" id="additionalRecipients" placeholder="e.g., E.HASU, E.SAFEGUARD (optional)">
+                    </div>
+
+                    <div class="buttons">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                        <button type="button" class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Right Panel: Visualization -->
+            <div class="panel">
+                <h2>Live Routing Visualization</h2>
+
+                <div id="visualization">
+                    <div class="alert warning" id="emptyState">
+                        <strong>Fill in the form to see routing visualization</strong><br>
+                        Start by entering your department and service details on the left.
+                    </div>
+
+                    <div id="visualizationContent" style="display: none;">
+                        <!-- Scenario Header -->
+                        <div class="scenario-header">
+                            <h3 id="scenarioTitle">Configuration Preview</h3>
+                            <div class="scenario-vars">
+                                <div class="var-item">
+                                    <strong>Trust:</strong>
+                                    <div id="var-trust" class="value"></div>
+                                </div>
+                                <div class="var-item">
+                                    <strong>Location:</strong>
+                                    <div id="var-location" class="value"></div>
+                                </div>
+                                <div class="var-item">
+                                    <strong>Department:</strong>
+                                    <div id="var-department" class="value"></div>
+                                </div>
+                                <div class="var-item">
+                                    <strong>Service:</strong>
+                                    <div id="var-service" class="value"></div>
+                                </div>
+                                <div class="var-item">
+                                    <strong>Care Setting:</strong>
+                                    <div id="var-careSetting" class="value"></div>
+                                </div>
+                                <div class="var-item">
+                                    <strong>Radio Button:</strong>
+                                    <div id="var-radioButton" class="value"></div>
+                                </div>
+                                <div class="var-item" id="var-systemConsultantItem">
+                                    <strong>System Consultant:</strong>
+                                    <div id="var-systemConsultant" class="value"></div>
+                                </div>
+                                <div class="var-item" id="var-realConsultantItem">
+                                    <strong>Real Consultant:</strong>
+                                    <div id="var-realConsultant" class="value"></div>
+                                </div>
+                                <div class="var-item" id="var-requesterItem">
+                                    <strong>Requester:</strong>
+                                    <div id="var-requester" class="value"></div>
+                                </div>
+                                <div class="var-item" id="var-patientItem">
+                                    <strong>Patient:</strong>
+                                    <div id="var-patient" class="value"></div>
+                                </div>
+                            </div>
+
+                            <!-- Data Quality Gap Alert -->
+                            <div id="dataQualityGapAlert" style="display: none; margin-top: 1rem; padding: 1rem; background: #ffebee; border-left: 5px solid var(--color-critical); border-radius: 4px;">
+                                <strong style="color: var(--color-critical);">⚠️ DATA QUALITY GAP:</strong>
+                                <div style="margin-top: 0.5rem; font-size: 0.95rem;">
+                                    System shows <strong id="gapSystem"></strong> as Attending, but <strong id="gapReal"></strong> is actually responsible.
+                                    <div style="margin-top: 0.5rem; font-style: italic; color: var(--color-text-secondary);">
+                                        This is the "Consultant of the Week" / "Stale Attending field" problem (see S25).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Flow Diagram -->
+                        <div class="flow-diagram">
+                            <div class="flow-step">
+                                <div class="flow-box trigger">
+                                    <h4>1. Report Authorised in CRIS</h4>
+                                    <div class="content">
+                                        Radiologist authorizes report for patient: <strong id="flow-patient" class="empty">[Enter patient name]</strong>
+                                        <div style="margin-top: 0.5rem; font-size: 0.9rem;">
+                                            HL7 message sent to MEDITECH Expanse →
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="flow-box routing">
+                                    <h4>2. MEDITECH Determines Routing</h4>
+                                    <div class="content" id="routingLogic">
+                                        <div style="margin-bottom: 0.5rem;"><strong>RESULTTASK Configuration:</strong></div>
+                                        <div id="routingDetails"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="flow-step">
+                                <div class="flow-box recipients">
+                                    <h4>3. Result Tasks Created</h4>
+                                    <div class="content">
+                                        <ul class="recipient-list" id="recipientList">
+                                            <li class="empty">Configuration incomplete - select options above</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Path Comparison -->
+                        <div class="visualization" id="pathComparison" style="display: none;">
+                            <h3 style="margin-bottom: var(--spacing-md); color: var(--color-nhs-dark-blue);">Path A vs Path B Comparison</h3>
+                            <div class="path-comparison">
+                                <div class="path-panel path-a">
+                                    <h4>If Trust Uses Path A (Attending)</h4>
+                                    <div id="pathARecipients"></div>
+                                </div>
+                                <div class="path-panel path-b">
+                                    <h4>If Trust Uses Path B (Requesting)</h4>
+                                    <div id="pathBRecipients"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Form elements
+        const form = document.getElementById('configForm');
+        const inputs = {
+            trust: document.getElementById('trust'),
+            location: document.getElementById('location'),
+            department: document.getElementById('department'),
+            service: document.getElementById('service'),
+            careSetting: document.getElementById('careSetting'),
+            radioButton: document.getElementsByName('radioButton'),
+            deliverTo: document.getElementById('deliverTo'),
+            workgroupName: document.getElementById('workgroupName'),
+            systemConsultant: document.getElementById('systemConsultant'),
+            realConsultant: document.getElementById('realConsultant'),
+            patientName: document.getElementById('patientName'),
+            requester: document.getElementById('requester'),
+            additionalRecipients: document.getElementById('additionalRecipients')
+        };
+
+        // Show/hide workgroup name field
+        inputs.deliverTo.addEventListener('change', function() {
+            const workgroupNameGroup = document.getElementById('workgroupNameGroup');
+            if (this.value === 'both' || this.value === 'workgroup') {
+                workgroupNameGroup.style.display = 'block';
+                inputs.workgroupName.required = true;
+            } else {
+                workgroupNameGroup.style.display = 'none';
+                inputs.workgroupName.required = false;
+            }
+            updateVisualization();
+        });
+
+        // Add change listeners to all inputs
+        Object.values(inputs).forEach(input => {
+            if (input.length) { // Radio buttons
+                Array.from(input).forEach(radio => {
+                    radio.addEventListener('change', updateVisualization);
+                });
+            } else {
+                input.addEventListener('input', updateVisualization);
+                input.addEventListener('change', updateVisualization);
+            }
+        });
+
+        function getRadioValue(name) {
+            const radio = document.querySelector(`input[name="${name}"]:checked`);
+            return radio ? radio.value : '';
+        }
+
+        function updateVisualization() {
+            const trust = inputs.trust.value;
+            const location = inputs.location.value;
+            const department = inputs.department.value;
+            const service = inputs.service.value;
+            const careSetting = inputs.careSetting.value;
+            const radioButton = getRadioValue('radioButton');
+            const deliverTo = inputs.deliverTo.value;
+            const workgroupName = inputs.workgroupName.value;
+            const systemConsultant = inputs.systemConsultant.value;
+            const realConsultant = inputs.realConsultant.value;
+            const patientName = inputs.patientName.value;
+            const requester = inputs.requester.value;
+            const additionalRecipients = inputs.additionalRecipients.value;
+
+            // Check for data quality gap
+            const dataQualityWarning = document.getElementById('dataQualityWarning');
+            if (systemConsultant && realConsultant && systemConsultant.trim() !== realConsultant.trim()) {
+                dataQualityWarning.style.display = 'block';
+            } else {
+                dataQualityWarning.style.display = 'none';
+            }
+
+            // Check if minimum required fields are filled
+            const hasMinimumData = trust && department && service;
+
+            const emptyState = document.getElementById('emptyState');
+            const visualizationContent = document.getElementById('visualizationContent');
+
+            if (!hasMinimumData) {
+                emptyState.style.display = 'block';
+                visualizationContent.style.display = 'none';
+                return;
+            }
+
+            emptyState.style.display = 'none';
+            visualizationContent.style.display = 'block';
+
+            // Update scenario header
+            document.getElementById('scenarioTitle').textContent =
+                `${service} - ${department}` + (location ? ` @ ${location}` : '');
+
+            // Update variables display
+            document.getElementById('var-trust').innerHTML = trust || '<span class="empty">Not specified</span>';
+            document.getElementById('var-location').innerHTML = location || '<span class="empty">Not specified</span>';
+            document.getElementById('var-department').innerHTML = department || '<span class="empty">Not specified</span>';
+            document.getElementById('var-service').innerHTML = service || '<span class="empty">Not specified</span>';
+
+            const careSettingText = careSetting === 'inpatient' ? 'Inpatient (INPRESULT)' :
+                                   careSetting === 'ambulatory' ? 'Outpatient (AMBRESULT)' :
+                                   '<span class="empty">Not selected</span>';
+            document.getElementById('var-careSetting').innerHTML = careSettingText;
+
+            const radioButtonText = radioButton === 'attending' ? 'Path A (Attending)' :
+                                   radioButton === 'requesting' ? 'Path B (Requesting Clinician)' :
+                                   '<span class="empty">Not selected</span>';
+            document.getElementById('var-radioButton').innerHTML = radioButtonText;
+
+            // Update scenario variables
+            document.getElementById('var-systemConsultant').innerHTML = systemConsultant || '<span class="empty">Not entered</span>';
+            document.getElementById('var-realConsultant').innerHTML = realConsultant || '<span class="empty">Not entered</span>';
+            document.getElementById('var-requester').innerHTML = requester || '<span class="empty">Not entered</span>';
+            document.getElementById('var-patient').innerHTML = patientName || '<span class="empty">Not entered</span>';
+
+            // Show/hide variable items based on whether they're filled
+            document.getElementById('var-systemConsultantItem').style.display = systemConsultant ? 'block' : 'none';
+            document.getElementById('var-realConsultantItem').style.display = realConsultant ? 'block' : 'none';
+            document.getElementById('var-requesterItem').style.display = requester ? 'block' : 'none';
+            document.getElementById('var-patientItem').style.display = patientName ? 'block' : 'none';
+
+            // Update data quality gap alert in header
+            const dataQualityGapAlert = document.getElementById('dataQualityGapAlert');
+            if (systemConsultant && realConsultant && systemConsultant.trim() !== realConsultant.trim()) {
+                dataQualityGapAlert.style.display = 'block';
+                document.getElementById('gapSystem').textContent = systemConsultant;
+                document.getElementById('gapReal').textContent = realConsultant;
+
+                // Highlight the variables with data quality gap
+                const systemItem = document.getElementById('var-systemConsultantItem');
+                const realItem = document.getElementById('var-realConsultantItem');
+                systemItem.style.borderLeftColor = 'var(--color-critical)';
+                systemItem.style.background = '#ffebee';
+                realItem.style.borderLeftColor = 'var(--color-success)';
+                realItem.style.background = '#e8f5e9';
+            } else {
+                dataQualityGapAlert.style.display = 'none';
+                // Reset colors
+                const systemItem = document.getElementById('var-systemConsultantItem');
+                const realItem = document.getElementById('var-realConsultantItem');
+                if (systemItem) {
+                    systemItem.style.borderLeftColor = 'var(--color-nhs-blue)';
+                    systemItem.style.background = 'white';
+                }
+                if (realItem) {
+                    realItem.style.borderLeftColor = 'var(--color-nhs-blue)';
+                    realItem.style.background = 'white';
+                }
+            }
+
+            // Update flow patient name
+            document.getElementById('flow-patient').innerHTML = patientName || '<span class="empty">[Enter patient name]</span>';
+            document.getElementById('flow-patient').className = patientName ? 'value' : 'empty';
+
+            // Update routing logic
+            let routingDetails = '';
+            if (radioButton && deliverTo) {
+                routingDetails = `<div style="margin-bottom: 0.5rem;">• RESULTTASK: IMG.${department.toUpperCase().replace(/\s+/g, '')}</div>`;
+                routingDetails += `<div style="margin-bottom: 0.5rem;">• Radio Button = <strong>${radioButton === 'attending' ? 'Attending' : 'Requesting Clinician'}</strong></div>`;
+                routingDetails += `<div style="margin-bottom: 0.5rem;">• Deliver To = <strong>${deliverTo === 'provider' ? 'Provider Only' : deliverTo === 'both' ? 'Workgroup and Provider' : 'Workgroup Only'}</strong></div>`;
+                if (workgroupName && (deliverTo === 'both' || deliverTo === 'workgroup')) {
+                    routingDetails += `<div style="margin-bottom: 0.5rem;">• Workgroup = <strong>${workgroupName}</strong></div>`;
+                    if (careSetting) {
+                        routingDetails += `<div>• Item Triage = <strong>${careSetting === 'inpatient' ? 'INPRESULT' : 'AMBRESULT'}</strong></div>`;
+                    }
+                }
+            } else {
+                routingDetails = '<span class="empty">Select Radio Button and Delivery method above</span>';
+            }
+            document.getElementById('routingDetails').innerHTML = routingDetails;
+
+            // Update recipient list
+            const recipientList = document.getElementById('recipientList');
+            recipientList.innerHTML = '';
+
+            if (radioButton && deliverTo) {
+                let primaryRecipient = '';
+                let hasDataQualityGap = false;
+
+                if (radioButton === 'attending') {
+                    primaryRecipient = systemConsultant || 'Current Attending Consultant';
+                    // Check for data quality gap
+                    if (systemConsultant && realConsultant && systemConsultant.trim() !== realConsultant.trim()) {
+                        hasDataQualityGap = true;
+                    }
+                } else {
+                    primaryRecipient = requester || 'Requesting Clinician';
+                }
+
+                // Primary recipient (individual)
+                if (deliverTo !== 'workgroup') {
+                    const li = document.createElement('li');
+
+                    if (hasDataQualityGap) {
+                        li.className = 'primary';
+                        li.style.borderLeftColor = 'var(--color-critical)';
+                        li.style.background = '#ffebee';
+                        li.innerHTML = `<strong>PRIMARY (Individual) - ⚠️ DATA QUALITY ISSUE:</strong><br>` +
+                                      `MEDITECH will deliver to: <strong>${systemConsultant}</strong> (stale Attending field)<br>` +
+                                      `SHOULD deliver to: <strong>${realConsultant}</strong> (actually responsible)<br>` +
+                                      `<em style="color: var(--color-critical); margin-top: 0.5rem; display: block;">` +
+                                      `This is Path A's silent failure mode. Result goes to WRONG consultant. No error message.</em>`;
+                    } else {
+                        li.className = 'primary';
+                        li.innerHTML = `<strong>PRIMARY (Individual):</strong> ${primaryRecipient}`;
+                    }
+                    recipientList.appendChild(li);
+                }
+
+                // Workgroup recipient
+                if (deliverTo === 'both' || deliverTo === 'workgroup') {
+                    if (workgroupName) {
+                        const li = document.createElement('li');
+                        li.className = deliverTo === 'workgroup' ? 'primary' : 'secondary';
+                        li.innerHTML = `<strong>${deliverTo === 'workgroup' ? 'PRIMARY' : 'SECONDARY'} (Team Workgroup):</strong> ${workgroupName}`;
+                        recipientList.appendChild(li);
+                    }
+                }
+
+                // Additional recipients (pathway routing)
+                if (additionalRecipients) {
+                    const recipients = additionalRecipients.split(',').map(r => r.trim()).filter(r => r);
+                    recipients.forEach(recipient => {
+                        const li = document.createElement('li');
+                        li.className = 'secondary';
+                        li.innerHTML = `<strong>ADDITIONAL (Pathway Routing):</strong> ${recipient}`;
+                        recipientList.appendChild(li);
+                    });
+                }
+            }
+
+            // Show path comparison if we have scenario data
+            const pathComparison = document.getElementById('pathComparison');
+            if (systemConsultant && requester) {
+                pathComparison.style.display = 'block';
+                updatePathComparison(systemConsultant, realConsultant, requester, deliverTo, workgroupName, additionalRecipients);
+            } else {
+                pathComparison.style.display = 'none';
+            }
+        }
+
+        function updatePathComparison(systemConsultant, realConsultant, requester, deliverTo, workgroupName, additionalRecipients) {
+            const hasDataQualityGap = systemConsultant && realConsultant && systemConsultant.trim() !== realConsultant.trim();
+
+            // Path A recipients
+            let pathAHtml = '<ul class="recipient-list" style="margin-top: 0.5rem;">';
+            if (deliverTo !== 'workgroup') {
+                if (hasDataQualityGap) {
+                    pathAHtml += `<li style="border-left-color: var(--color-critical); background: #ffebee;">` +
+                                `<strong>Individual (WRONG!):</strong> ${systemConsultant}<br>` +
+                                `<em style="color: var(--color-critical);">Should be: ${realConsultant}</em>` +
+                                `</li>`;
+                } else {
+                    pathAHtml += `<li class="primary"><strong>Individual:</strong> ${systemConsultant}</li>`;
+                }
+            }
+            if ((deliverTo === 'both' || deliverTo === 'workgroup') && workgroupName) {
+                pathAHtml += `<li class="secondary"><strong>Workgroup:</strong> ${workgroupName}</li>`;
+            }
+            if (additionalRecipients) {
+                const recipients = additionalRecipients.split(',').map(r => r.trim()).filter(r => r);
+                recipients.forEach(recipient => {
+                    pathAHtml += `<li class="secondary"><strong>Pathway:</strong> ${recipient}</li>`;
+                });
+            }
+            pathAHtml += '</ul>';
+            document.getElementById('pathARecipients').innerHTML = pathAHtml;
+
+            // Path B recipients
+            let pathBHtml = '<ul class="recipient-list" style="margin-top: 0.5rem;">';
+            if (deliverTo !== 'workgroup') {
+                pathBHtml += `<li class="primary"><strong>Individual:</strong> ${requester}</li>`;
+            }
+            if ((deliverTo === 'both' || deliverTo === 'workgroup') && workgroupName) {
+                pathBHtml += `<li class="secondary"><strong>Workgroup:</strong> ${workgroupName}</li>`;
+            }
+            if (additionalRecipients) {
+                const recipients = additionalRecipients.split(',').map(r => r.trim()).filter(r => r);
+                recipients.forEach(recipient => {
+                    pathBHtml += `<li class="secondary"><strong>Pathway:</strong> ${recipient}</li>`;
+                });
+            }
+            pathBHtml += '</ul>';
+            document.getElementById('pathBRecipients').innerHTML = pathBHtml;
+        }
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset the form? All entered data will be cleared.')) {
+                form.reset();
+                updateVisualization();
+            }
+        }
+
+        // Initial update
+        updateVisualization();
+    </script>
+</body>
+</html>

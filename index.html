@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MEDITECH Expanse Configuration Guide | Mid Cheshire NHS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #005eb8 0%, #003087 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            color: #003087;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: #425563;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .card ul {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            color: #425563;
+        }
+
+        .card ul li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .card ul li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #007f3b;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #005eb8 0%, #003087 100%);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,94,184,0.3);
+        }
+
+        .btn:hover {
+            box-shadow: 0 4px 12px rgba(0,94,184,0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ed8b00 0%, #f57c00 100%);
+            box-shadow: 0 2px 8px rgba(237,139,0,0.3);
+        }
+
+        .btn-secondary:hover {
+            box-shadow: 0 4px 12px rgba(237,139,0,0.4);
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 3rem;
+            opacity: 0.9;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>MEDITECH Expanse Configuration Guide</h1>
+            <p>Imaging Results Notification System | Template-Based Architecture v5.0</p>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <div class="card-icon">📚</div>
+                <h2>Clinical Guide</h2>
+                <p>Comprehensive scenario-based learning guide for clinical leads and application specialists.</p>
+                <ul>
+                    <li>45 complete scenarios across 5 maturity levels</li>
+                    <li>Path A vs Path B comparison tables</li>
+                    <li>Failure modes and compensation strategies</li>
+                    <li>Template-based architecture (85% code reduction)</li>
+                </ul>
+                <a href="clinical-guide-enhanced.html" class="btn">Open Clinical Guide →</a>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎯</div>
+                <h2>Interactive Configurator</h2>
+                <p>Real-time service configuration tool with live routing visualization.</p>
+                <ul>
+                    <li>Enter your service details and see routing instantly</li>
+                    <li>Visual Path A vs Path B comparison</li>
+                    <li>Data quality gap visualization</li>
+                    <li>Print-ready configuration output</li>
+                </ul>
+                <a href="interactive-configurator.html" class="btn btn-secondary">Launch Configurator →</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Mid Cheshire NHS Foundation Trust</strong></p>
+            <p>MEDITECH Expanse PP64 Build | Results Notification Configuration</p>
+            <p style="margin-top: 1rem; font-size: 0.9rem;">Template-based architecture - Data-driven scenario rendering</p>
+        </div>
+    </div>
+</body>
+</html>
