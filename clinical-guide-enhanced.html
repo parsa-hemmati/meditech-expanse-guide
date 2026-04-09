@@ -131,6 +131,52 @@
                         </div>
                     </div>
 
+                    <!-- End-to-End Pipeline Overview -->
+                    <div class="concept-block">
+                        <div class="concept-number">0</div>
+                        <div class="concept-content">
+                            <h3>How It All Fits Together: The Notification Pipeline</h3>
+                            <p class="concept-intro">Before diving into each mechanism, understand the end-to-end flow that fires every time a result is authorised.</p>
+
+                            <div class="explanation" style="font-family: monospace; font-size: 0.95rem; line-height: 1.8; background: #f8f9fa; padding: 1.5rem; border-radius: 8px; border: 1px solid #dee2e6;">
+                                <div style="text-align: center;">
+                                    <div style="display: inline-block; background: var(--color-nhs-blue); color: white; padding: 0.5rem 1.5rem; border-radius: 6px; font-weight: 600;">Result filed in Expanse</div>
+                                    <div style="font-size: 1.5rem; margin: 0.5rem 0;">&#8595;</div>
+                                    <div style="display: inline-block; background: #e3f2fd; padding: 0.75rem 1.5rem; border-radius: 6px; border: 2px solid var(--color-nhs-blue); text-align: left; max-width: 500px;">
+                                        <strong>RESULTTASK dictionary evaluated</strong><br>
+                                        &rarr; Does this result type have a RESULTTASK entry?<br>
+                                        &rarr; Are the trigger conditions met (abnormal? critical?)
+                                    </div>
+                                    <div style="font-size: 1.5rem; margin: 0.5rem 0;">&#8595;</div>
+                                    <div style="display: inline-block; background: #e8f5e9; padding: 0.75rem 1.5rem; border-radius: 6px; border: 2px solid var(--color-success); text-align: left; max-width: 500px;">
+                                        <strong>Results Task Generation executes</strong><br>
+                                        &rarr; Identifies recipient via care team / ordering provider<br>
+                                        &rarr; Checks Workgroup Dictionary for fallback<br>
+                                        &rarr; Creates task on worklist
+                                    </div>
+                                    <div style="font-size: 1.5rem; margin: 0.5rem 0;">&#8595;</div>
+                                    <div style="display: inline-block; background: var(--color-success); color: white; padding: 0.5rem 1.5rem; border-radius: 6px; font-weight: 600;">Clinician sees and acknowledges task</div>
+                                </div>
+                            </div>
+
+                            <h4 style="margin-top: 1.5rem; margin-bottom: 1rem;">Common Gotchas</h4>
+                            <div class="failure-grid" style="grid-template-columns: 1fr;">
+                                <div class="failure-card warning">
+                                    <h4>Result visible in chart but no task generated</h4>
+                                    <p>A result can arrive and be visible in the patient's chart without a task being generated if RESULTTASK has no matching entry for that result type. The result is <em>filed</em> — but no one is <em>notified</em>. This is a silent gap.</p>
+                                </div>
+                                <div class="failure-card warning">
+                                    <h4>Radiology RESULTTASK entries behave differently from lab entries</h4>
+                                    <p>RESULTTASK entries for radiology often behave differently from lab entries because they interact with CRIS/RIS authorisation status. A result filed in CRIS may not propagate correctly if the RESULTTASK entry doesn't account for the vetting workflow.</p>
+                                </div>
+                                <div class="failure-card warning">
+                                    <h4>Surveillance Rules and RESULTTASK overlap</h4>
+                                    <p>Surveillance Rules and RESULTTASK can overlap, and misconfiguration of both can lead to duplicate tasks or gaps in notification. Review both when troubleshooting unexpected behaviour.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Core Concept 1 -->
                     <div class="concept-block">
                         <div class="concept-number">1</div>
